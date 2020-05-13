@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.mouzetech.ordersystem.domain.Categoria;
 import com.mouzetech.ordersystem.domain.Cidade;
+import com.mouzetech.ordersystem.domain.Cliente;
+import com.mouzetech.ordersystem.domain.Endereco;
 import com.mouzetech.ordersystem.domain.Estado;
 import com.mouzetech.ordersystem.domain.Produto;
+import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 import com.mouzetech.ordersystem.repositories.CategoriaRepository;
 import com.mouzetech.ordersystem.repositories.CidadeRepository;
+import com.mouzetech.ordersystem.repositories.ClienteRepository;
+import com.mouzetech.ordersystem.repositories.EnderecoRepository;
 import com.mouzetech.ordersystem.repositories.EstadoRepository;
 import com.mouzetech.ordersystem.repositories.ProdutoRepository;
 
@@ -30,6 +35,12 @@ public class OrdersystemApplication implements CommandLineRunner {
 	
 	@Autowired
 	private CidadeRepository cidadeRepo;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepo;
+	
+	@Autowired
+	private ClienteRepository clienteRepo;
 	
 
 	public static void main(String[] args) {
@@ -67,6 +78,15 @@ public class OrdersystemApplication implements CommandLineRunner {
 		produtoRepo.saveAll(Arrays.asList(p1, p2, p3));
 		estadoRepo.saveAll(Arrays.asList(est1, est2));
 		cidadeRepo.saveAll(Arrays.asList(c1, c2, c3));
+		
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		Endereco e1 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Jardim", "23300333", c1, cli1);
+		Endereco e2 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Centro", "14320637", c2, cli1);
+		cli1.getTelefones().addAll(Arrays.asList("21966425063", "21990836512"));
+		cli1.setEnderecos(Arrays.asList(e1, e2));
+		
+		clienteRepo.saveAll(Arrays.asList(cli1));
+		enderecoRepo.saveAll(Arrays.asList(e1, e2));
 		
 		
 		
