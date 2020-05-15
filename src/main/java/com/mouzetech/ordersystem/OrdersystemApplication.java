@@ -3,10 +3,14 @@ package com.mouzetech.ordersystem;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
+import javax.servlet.Filter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.mouzetech.ordersystem.domain.Categoria;
 import com.mouzetech.ordersystem.domain.Cidade;
@@ -64,6 +68,18 @@ public class OrdersystemApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OrdersystemApplication.class, args);
+	}
+	
+	@Bean
+	public Filter getCharacterEncodingFilter() {
+
+	    CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+
+	    encodingFilter.setEncoding("UTF-8");
+	    encodingFilter.setForceEncoding(true);
+
+	    return encodingFilter;
+
 	}
 
 	@Override
