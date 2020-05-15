@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 
@@ -38,6 +40,7 @@ public class Cliente implements Serializable{
 	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	private List<Endereco> enderecos = new ArrayList<>();
 	
+	@JsonBackReference
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 	
@@ -109,6 +112,7 @@ public class Cliente implements Serializable{
 		this.enderecos = enderecos;
 	}
 	
+	@JsonIgnore
 	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
