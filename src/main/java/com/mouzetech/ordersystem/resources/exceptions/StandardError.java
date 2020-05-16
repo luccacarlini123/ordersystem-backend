@@ -1,4 +1,4 @@
-package com.mouzetech.ordersystem.repositories.exceptions;
+package com.mouzetech.ordersystem.resources.exceptions;
 
 import java.io.Serializable;
 
