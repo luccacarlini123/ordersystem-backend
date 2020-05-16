@@ -1,5 +1,6 @@
 package com.mouzetech.ordersystem.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,9 @@ public class CategoriaService {
 		}catch(DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Este objeto possui itens associados a ele, impossível excluir.");
 		}
+	}
+	
+	public List<Categoria> buscarTodos(){
+		return repo.findAll();
 	}
 }
