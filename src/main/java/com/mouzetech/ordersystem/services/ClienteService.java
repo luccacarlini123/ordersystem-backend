@@ -10,8 +10,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.mouzetech.ordersystem.domain.Cidade;
 import com.mouzetech.ordersystem.domain.Cliente;
+import com.mouzetech.ordersystem.domain.Endereco;
+import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 import com.mouzetech.ordersystem.dto.ClienteDTO;
+import com.mouzetech.ordersystem.dto.ClienteNewDTO;
 import com.mouzetech.ordersystem.repositories.ClienteRepository;
 import com.mouzetech.ordersystem.services.exceptions.DataIntegrityException;
 import com.mouzetech.ordersystem.services.exceptions.ObjectNotFoundException;
@@ -21,7 +25,7 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
-
+	
 	public Cliente buscarPorId(Integer id) {
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(
@@ -30,6 +34,10 @@ public class ClienteService {
 
 	public List<Cliente> buscarTodos() {
 		return repo.findAll();
+	}
+	
+	public Cliente inserir(Cliente obj) {
+		return repo.save(obj); 
 	}
 
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
@@ -59,5 +67,20 @@ public class ClienteService {
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+
+	public Cliente fromDTO(ClienteNewDTO objDto) {
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
+		Cidade cidade = new Cidade(objDto.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cidade, cli);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(objDto.getTelefone1());
+		if(objDto.getTelefone2()!=null) {
+			cli.getTelefones().add(objDto.getTelefone2());
+		}	
+		if(objDto.getTelefone3()!=null) {
+			cli.getTelefones().add(objDto.getTelefone3());
+		}
+		return cli;		
 	}
 }
