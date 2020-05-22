@@ -3,6 +3,8 @@ package com.mouzetech.ordersystem.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 import com.mouzetech.ordersystem.dto.ClienteDTO;
 import com.mouzetech.ordersystem.dto.ClienteNewDTO;
 import com.mouzetech.ordersystem.repositories.ClienteRepository;
+import com.mouzetech.ordersystem.repositories.EnderecoRepository;
 import com.mouzetech.ordersystem.services.exceptions.DataIntegrityException;
 import com.mouzetech.ordersystem.services.exceptions.ObjectNotFoundException;
 
@@ -25,6 +28,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepo;
 	
 	public Cliente buscarPorId(Integer id) {
 		Optional<Cliente> obj = repo.findById(id);
@@ -36,8 +42,12 @@ public class ClienteService {
 		return repo.findAll();
 	}
 	
+	@Transactional
 	public Cliente inserir(Cliente obj) {
-		return repo.save(obj); 
+		obj.setId(null);
+		repo.save(obj); 
+		enderecoRepo.saveAll(obj.getEnderecos());
+		return obj;
 	}
 
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {

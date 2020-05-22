@@ -2,6 +2,9 @@ package com.mouzetech.ordersystem.dto;
 
 import java.io.Serializable;
 
+import com.mouzetech.ordersystem.services.validations.ClienteInsert;
+
+@ClienteInsert
 public class ClienteNewDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
