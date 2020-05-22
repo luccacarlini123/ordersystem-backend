@@ -2,23 +2,43 @@ package com.mouzetech.ordersystem.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 import com.mouzetech.ordersystem.services.validations.ClienteInsert;
+import com.mouzetech.ordersystem.services.validations.Tamanho;
 
 @ClienteInsert
+@Tamanho
 public class ClienteNewDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String nome;
+	
+	@NotBlank(message="Preenchimento obrigatório")
+	@Email(message="Email inválido")
 	private String email;
+	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String cpfOuCnpj;
+	
 	private Integer tipo;
 	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String logradouro;
+	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String numero;
+	
+	
 	private String complemento;
 	private String bairro;
+	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String cep;
 	
+	@NotBlank(message="Preenchimento obrigatório")
 	private String telefone1;
 	private String telefone2;
 	private String telefone3;
