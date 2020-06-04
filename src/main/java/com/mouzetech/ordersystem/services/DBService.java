@@ -20,6 +20,7 @@ import com.mouzetech.ordersystem.domain.PagamentoComCartao;
 import com.mouzetech.ordersystem.domain.Pedido;
 import com.mouzetech.ordersystem.domain.Produto;
 import com.mouzetech.ordersystem.domain.enums.EstadoPagamento;
+import com.mouzetech.ordersystem.domain.enums.Perfil;
 import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 import com.mouzetech.ordersystem.repositories.CategoriaRepository;
 import com.mouzetech.ordersystem.repositories.CidadeRepository;
@@ -121,14 +122,22 @@ public class DBService {
 		estadoRepo.saveAll(Arrays.asList(est1, est2));
 		cidadeRepo.saveAll(Arrays.asList(c1, c2, c3));
 
-		Cliente cli1 = new Cliente(null, "Maria Silva", "lucca.carlini18@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, pe.encode("123456789"));
+		Cliente cli1 = new Cliente(null, "Lucca Carlini", "lucca.carlini18@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, pe.encode("123456789"));
+		cli1.getTelefones().addAll(Arrays.asList("21966425063", "21990836512"));
+		cli1.addPerfil(Perfil.ADMIN);
+		
+		Cliente cli2 = new Cliente(null, "Maria Silva", "maria@gmail.com", "16976587764", TipoCliente.PESSOAFISICA, pe.encode("3452360089"));
+		cli2.getTelefones().addAll(Arrays.asList("21990836589", "21966332587"));
+		
 		Endereco e1 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Jardim", "23300333", c1, cli1);
 		Endereco e2 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Centro", "14320637", c2, cli1);
-		cli1.getTelefones().addAll(Arrays.asList("21966425063", "21990836512"));
+		Endereco e3 = new Endereco(null, "Rua Feliciana", "300", null, "Sabugo", "14320637", c1, cli2);
+		
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 
-		clienteRepo.saveAll(Arrays.asList(cli1));
-		enderecoRepo.saveAll(Arrays.asList(e1, e2));
+		clienteRepo.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepo.saveAll(Arrays.asList(e1, e2, e3));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 

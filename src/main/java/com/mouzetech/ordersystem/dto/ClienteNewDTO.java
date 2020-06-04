@@ -2,6 +2,7 @@ package com.mouzetech.ordersystem.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -18,6 +19,7 @@ public class ClienteNewDTO implements Serializable {
 	
 	@NotBlank(message="Preenchimento obrigatório")
 	@Email(message="Email inválido")
+	@Column(unique=true)
 	private String email;
 	
 	@NotBlank(message="Preenchimento obrigatório")
