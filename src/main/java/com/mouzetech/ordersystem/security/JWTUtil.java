@@ -25,6 +25,19 @@ public class JWTUtil {
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes())
 				.compact();
 	}
+	
+	public boolean tokenValido(String token) {
+		Claims claims = getClaims(token);
+		if(claims!=null) {
+			String username = claims.getSubject();
+			Date expirationDate = claims.getExpiration();
+			Date now = new Date(System.currentTimeMillis());
+			if(username != null && expirationDate != null && now.before(expirationDate)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public String getUsername(String token) {
 		Claims claims = getClaims(token);
@@ -41,18 +54,4 @@ public class JWTUtil {
 			return null;
 		}
 	}
-
-	public boolean tokenValido(String token) {
-		Claims claims = getClaims(token);
-		if(claims!=null) {
-			String username = claims.getSubject();
-			Date expirationDate = claims.getExpiration();
-			Date now = new Date(System.currentTimeMillis());
-			if(username != null && expirationDate != null && now.before(expirationDate)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 }
