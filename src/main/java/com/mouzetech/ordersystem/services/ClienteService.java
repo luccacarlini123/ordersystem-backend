@@ -16,11 +16,14 @@ import org.springframework.stereotype.Service;
 import com.mouzetech.ordersystem.domain.Cidade;
 import com.mouzetech.ordersystem.domain.Cliente;
 import com.mouzetech.ordersystem.domain.Endereco;
+import com.mouzetech.ordersystem.domain.enums.Perfil;
 import com.mouzetech.ordersystem.domain.enums.TipoCliente;
 import com.mouzetech.ordersystem.dto.ClienteDTO;
 import com.mouzetech.ordersystem.dto.ClienteNewDTO;
 import com.mouzetech.ordersystem.repositories.ClienteRepository;
 import com.mouzetech.ordersystem.repositories.EnderecoRepository;
+import com.mouzetech.ordersystem.security.UserSS;
+import com.mouzetech.ordersystem.services.exceptions.AuthorizationException;
 import com.mouzetech.ordersystem.services.exceptions.DataIntegrityException;
 import com.mouzetech.ordersystem.services.exceptions.ObjectNotFoundException;
 
@@ -37,6 +40,11 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 	
 	public Cliente buscarPorId(Integer id) {
+		UserSS user = UserService.authenticated();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Id não encontrado: " + id + ". Tipo: " + Cliente.class.getName()));
