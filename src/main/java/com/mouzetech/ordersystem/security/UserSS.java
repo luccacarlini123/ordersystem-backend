@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.mouzetech.ordersystem.domain.enums.Perfil;
 
 public class UserSS implements UserDetails {
-
 	private static final long serialVersionUID = 1L;
+
 	private Integer id;
 	private String email;
 	private String senha;
@@ -28,11 +28,11 @@ public class UserSS implements UserDetails {
 		this.senha = senha;
 		this.authorities = perfis.stream().map(x -> new SimpleGrantedAuthority(x.getDescricao())).collect(Collectors.toList());
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
-
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
@@ -50,28 +50,24 @@ public class UserSS implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return true;
 	}
-
+	
 	public boolean hasRole(Perfil perfil) {
 		return getAuthorities().contains(new SimpleGrantedAuthority(perfil.getDescricao()));
 	}
