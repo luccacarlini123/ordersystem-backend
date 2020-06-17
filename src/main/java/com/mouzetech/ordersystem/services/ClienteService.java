@@ -1,5 +1,6 @@
 package com.mouzetech.ordersystem.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mouzetech.ordersystem.domain.Cidade;
 import com.mouzetech.ordersystem.domain.Cliente;
@@ -38,6 +40,9 @@ public class ClienteService {
 	
 	@Autowired
 	private BCryptPasswordEncoder pe;
+	
+	@Autowired
+	private S3Service s3Service;
 	
 	public Cliente buscarPorId(Integer id) {
 		UserSS user = UserService.authenticated();
@@ -104,5 +109,9 @@ public class ClienteService {
 			cli.getTelefones().add(objDto.getTelefone3());
 		}
 		return cli;		
+	}
+	
+	public URI uploadFile(MultipartFile mf) {
+		return s3Service.uploadFile(mf);
 	}
 }
