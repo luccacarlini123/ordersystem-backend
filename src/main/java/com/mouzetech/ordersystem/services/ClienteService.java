@@ -36,28 +36,31 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
-	
+
 	@Autowired
 	private EnderecoRepository enderecoRepo;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder pe;
-	
+
 	@Autowired
 	private S3Service s3Service;
-	
+
 	@Autowired
 	private ImageService imgService;
-	
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
-	
+
+	@Value("${img.profile.size}")
+	private Integer size;
+
 	public Cliente buscarPorId(Integer id) {
 		UserSS user = UserService.authenticated();
-		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso negado");
 		}
-		
+
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(
 				() -> new ObjectNotFoundException("Id não encontrado: " + id + ". Tipo: " + Cliente.class.getName()));
@@ -66,11 +69,11 @@ public class ClienteService {
 	public List<Cliente> buscarTodos() {
 		return repo.findAll();
 	}
-	
+
 	@Transactional
 	public Cliente inserir(Cliente obj) {
 		obj.setId(null);
-		repo.save(obj); 
+		repo.save(obj);
 		enderecoRepo.saveAll(obj.getEnderecos());
 		return obj;
 	}
@@ -105,27 +108,31 @@ public class ClienteService {
 	}
 
 	public Cliente fromDTO(ClienteNewDTO objDto) {
-		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),
+				TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
 		Cidade cidade = new Cidade(objDto.getCidadeId(), null, null);
-		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cidade, cli);
+		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(),
+				objDto.getBairro(), objDto.getCep(), cidade, cli);
 		cli.getEnderecos().add(end);
 		cli.getTelefones().add(objDto.getTelefone1());
-		if(objDto.getTelefone2()!=null) {
+		if (objDto.getTelefone2() != null) {
 			cli.getTelefones().add(objDto.getTelefone2());
-		}	
-		if(objDto.getTelefone3()!=null) {
+		}
+		if (objDto.getTelefone3() != null) {
 			cli.getTelefones().add(objDto.getTelefone3());
 		}
-		return cli;		
+		return cli;
 	}
-	
+
 	public URI uploadFile(MultipartFile mf) {
-		UserSS user = UserService.authenticated();
-		if(user == null) {
-			throw new AuthorizationException("Acesso negado");
-		}
-		BufferedImage jpgImage = imgService.getJpgImageFromFile(mf);
-		String fileName = prefix + user.getId() + ".jpg";
-		return s3Service.uploadFile(fileName, imgService.getInputStream(jpgImage, "jpg"), "image");
+			UserSS user = UserService.authenticated();
+			if (user == null) {
+				throw new AuthorizationException("Acesso negado");
+			}
+			BufferedImage jpgImage = imgService.getJpgImageFromFile(mf);
+			jpgImage = imgService.cropSquare(jpgImage);
+			jpgImage = imgService.resize(jpgImage, size);
+			String fileName = prefix + user.getId() + ".jpg";
+			return s3Service.uploadFile(fileName, imgService.getInputStream(jpgImage, "jpg"), "image");
 	}
 }
