@@ -112,6 +112,11 @@ public class ClienteService {
 	}
 	
 	public URI uploadFile(MultipartFile mf) {
-		return s3Service.uploadFile(mf);
+		UserSS user = UserService.authenticated();
+		URI uri = s3Service.uploadFile(mf);
+		Cliente obj = buscarPorId(user.getId());
+		obj.setImageUrl(uri.toString());
+		repo.save(obj);
+		return uri;
 	}
 }
