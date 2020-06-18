@@ -1,5 +1,6 @@
 package com.mouzetech.ordersystem.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +45,12 @@ public class ClienteService {
 	
 	@Autowired
 	private S3Service s3Service;
+	
+	@Autowired
+	private ImageService imgService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
 	
 	public Cliente buscarPorId(Integer id) {
 		UserSS user = UserService.authenticated();
@@ -113,10 +121,11 @@ public class ClienteService {
 	
 	public URI uploadFile(MultipartFile mf) {
 		UserSS user = UserService.authenticated();
-		URI uri = s3Service.uploadFile(mf);
-		Cliente obj = buscarPorId(user.getId());
-		obj.setImageUrl(uri.toString());
-		repo.save(obj);
-		return uri;
+		if(user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		BufferedImage jpgImage = imgService.getJpgImageFromFile(mf);
+		String fileName = prefix + user.getId() + ".jpg";
+		return s3Service.uploadFile(fileName, imgService.getInputStream(jpgImage, "jpg"), "image");
 	}
 }
