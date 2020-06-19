@@ -77,6 +77,18 @@ public class ClienteService {
 		enderecoRepo.saveAll(obj.getEnderecos());
 		return obj;
 	}
+	
+	public Cliente buscarPorEmail(String email) {
+		UserSS user = UserService.authenticated();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		Cliente obj = repo.findByEmail(email);
+		if(obj==null) {
+			throw new ObjectNotFoundException("Email não encontrado: " + email + ". Tipo: " + Cliente.class.getName());
+		}
+		return obj;
+	}
 
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
