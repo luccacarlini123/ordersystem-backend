@@ -40,13 +40,14 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping(value="/email")
 	public ResponseEntity<Cliente> findByEmail(@RequestParam(value="value") String email){
 		Cliente obj = service.buscarPorEmail(email);
 		return ResponseEntity.ok().body(obj);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+	
 	@GetMapping
 	public ResponseEntity<List<ClienteDTO>> findAll(){
 		List<Cliente> list = service.buscarTodos();
